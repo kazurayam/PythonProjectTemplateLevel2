@@ -405,6 +405,10 @@ cb42413394c4: Mounted from library/python
 
 #### GitHub連携する方法
 
+自作プロジェクトを更新してレポジトリをGitHubにpushしたとき、その変更をトリガーとして自動的にDocker Hub上のイメージをビルドし直すことができるらしい。それは便利だ。
+
+ただしこのPythonProjectTemplateLevel2のPythonプログラムはこれ以上ないほどシンプルなのでGitHubとDockerHubを連携させる必要などない。この連携は別の機会に試すことにする。
+
 ## まとめ
 
 以上でLevel2は完了。つまり
