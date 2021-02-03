@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9cfe71d4-df3b-45c5-ba2b-8d245e498558" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProjectTemplateLevel2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProjectTemplateLevel2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/onDockerHub.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/images/onTestPyPI.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pyproject/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,10 +49,16 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15555556" />
     <property name="project.structure.side.proportion" value="0.33698905" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/docs/images" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
@@ -103,7 +111,9 @@
       <option name="presentableId" value="Default" />
       <updated>1612256051988</updated>
       <workItem from="1612256053163" duration="858000" />
-      <workItem from="1612263965635" duration="6691000" />
+      <workItem from="1612263965635" duration="7674000" />
+      <workItem from="1612311539164" duration="1808000" />
+      <workItem from="1612315071447" duration="3715000" />
     </task>
     <servers />
   </component>
@@ -118,22 +128,22 @@
       <screen x="0" y="25" width="1440" height="798" />
     </state>
     <state x="507" y="183" key="FileChooserDialogImpl/0.25.1440.798@0.25.1440.798" timestamp="1612268456091" />
-    <state width="1398" height="203" key="GridCell.Tab.0.bottom" timestamp="1612268042445">
+    <state width="918" height="203" key="GridCell.Tab.0.bottom" timestamp="1612272114933">
       <screen x="0" y="25" width="1440" height="798" />
     </state>
-    <state width="1398" height="203" key="GridCell.Tab.0.bottom/0.25.1440.798@0.25.1440.798" timestamp="1612268042445" />
-    <state width="1398" height="203" key="GridCell.Tab.0.center" timestamp="1612268042443">
+    <state width="918" height="203" key="GridCell.Tab.0.bottom/0.25.1440.798@0.25.1440.798" timestamp="1612272114933" />
+    <state width="918" height="203" key="GridCell.Tab.0.center" timestamp="1612272114932">
       <screen x="0" y="25" width="1440" height="798" />
     </state>
-    <state width="1398" height="203" key="GridCell.Tab.0.center/0.25.1440.798@0.25.1440.798" timestamp="1612268042443" />
-    <state width="1398" height="203" key="GridCell.Tab.0.left" timestamp="1612268042443">
+    <state width="918" height="203" key="GridCell.Tab.0.center/0.25.1440.798@0.25.1440.798" timestamp="1612272114932" />
+    <state width="918" height="203" key="GridCell.Tab.0.left" timestamp="1612272114932">
       <screen x="0" y="25" width="1440" height="798" />
     </state>
-    <state width="1398" height="203" key="GridCell.Tab.0.left/0.25.1440.798@0.25.1440.798" timestamp="1612268042442" />
-    <state width="1398" height="203" key="GridCell.Tab.0.right" timestamp="1612268042444">
+    <state width="918" height="203" key="GridCell.Tab.0.left/0.25.1440.798@0.25.1440.798" timestamp="1612272114932" />
+    <state width="918" height="203" key="GridCell.Tab.0.right" timestamp="1612272114933">
       <screen x="0" y="25" width="1440" height="798" />
     </state>
-    <state width="1398" height="203" key="GridCell.Tab.0.right/0.25.1440.798@0.25.1440.798" timestamp="1612268042444" />
+    <state width="918" height="203" key="GridCell.Tab.0.right/0.25.1440.798@0.25.1440.798" timestamp="1612272114933" />
     <state x="208" y="25" key="SettingsEditor" timestamp="1612268524507">
       <screen x="0" y="25" width="1440" height="798" />
     </state>

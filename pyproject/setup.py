@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="mypkg",
+    name="mypkg-kazurayam",
     version="1.0",
     description="simplest python package that greets you",
     author="kazurayam",

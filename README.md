@@ -234,8 +234,8 @@ UsernameとPasswordをメモっておけ。
 
 ```
 $repos/pyproject/ $ pipenv run python setup.py sdist
+
 ...
-$repos/pyproject/ $ pipenv run twine upload --repository pypitest dist/
 
 $ pipenv run twine upload --repository pypitest dist/*
 Uploading distributions to https://test.pypi.org/legacy/
@@ -246,20 +246,180 @@ HTTPError: 403 Forbidden from https://test.pypi.org/legacy/
 The user 'kazurayam_test' isn't allowed to upload to project 'mypkg'. See https://test.pypi.org/help/#project-name for more information.
 ```
 
-あれ？エラーになっちゃった。https://test.pypi.org/help/#project-name の説明を読んで考えるに、`mypkg` という名前がよくないのだろう。誰かほかの人がこの名前で作ったことがあって重複しタンだろう。
+あれ？エラーが発生した。メッセージに https://test.pypi.org/help/#project-name を読めと書いてある。どうやら `mypkg-1.0.tar.gz` というファイル名の先頭部分 `mypkg` という名前がPyPIのお気に召さないらしい。[Why cant I upload my own package to PyPI when my credential are working?
+](https://stackoverflow.com/questions/57457879/why-cant-i-upload-my-own-package-to-pypi-when-my-credential-are-working)によれば原因はPyPIのどこかにすでに `mypkg` という名前のライブラリがすでに存在しているから。だからユニークな名前に変更せよ、という。
 
-まあ、こういうエラーが出たということは、PyPIとのやりとりがほとんど成功した証拠だ。いいことにしよう。
+では対処しよう。今まで `setup.py` にこう書いてあった。
+```
+setup(
+    name="mypkg",
+```
+ここを書きかえよう。
+```
+setup(
+    name="mypkg-kazurayam",
+```
+そして `python setup.py sdist` と `twine upload --repository pypitest dist/*` をやり直せ。今度はどうかな？
 
-#### 
+```
+$ pipenv run python setup.py sdist
+```
+
+ここで気がついた。旧い名前の成果物 `pyproject/dist/mypkg-1.0.tar.gz` が自動では削除されずに残っていた。これを手動で削除しなければならなかった。
+
+```
+$ pipenv run twine upload --repository pypitest dist/*
+Uploading distributions to https://test.pypi.org/legacy/
+Uploading mypkg-kazurayam-1.0.tar.gz
+100%|██████████████████████████████████████████████████████████████]100%|████████████████████████████████████████████████████████████████████████████████████████| 4.19k/4.19k [00:02<00:00, 2.07kB/s]
+
+View at:
+https://test.pypi.org/project/mypkg-kazurayam/1.0/
+```
+
+うまくいった。ブラウザで https://test.pypi.org/project/mypkg-kazurayam/1.0/ を開いたらPyPIにアップロードできていた。
+
+![onTestPyPI](docs/images/onTestPyPI.png)
+
+成功！
+
+### Dockerイメージを作る
+
+#### Docker Desktop for Macをインストールする
+
+maxOS 11.1に Docker Desktop for Mac をインストールして使うことにする。
+
+Docker Desktop for Macを使えば、Mac Book Air上でDockerコンテナを動かすことができる。コマンドラインで `docker` コマンドを実行することができる。
+
+https://docs.docker.com/docker-for-mac/install/ を参照しながらインストールせよ。Docker Hubからdmgファイルをダウンロードしてダブルクリックし、Applicationsディレクトリに格納するだけだ。
+
+
+#### Dockeer Hubにアカウントを作る
+
+私は [Docker Hub](https://hub.docker.com/) に自分のためのアカウントを作成済みだった。まだ持っていなければ作ればいいだけのこと。
+
+#### Dockerイメージを作る
+
+[pyproject/Dockerfile](pyproject/Dockerfile) を作った。ここにはDockerイメージをを作るのに必要なDockerコマンドを記述しておく。
+
+そしてdockerコマンドを実行する。
+
+```
+$repos/pyproject (master *+)
+$ docker build --tag kazurayam/mypkg-kazurayam:1.0 .
+
+...
+
+Successfully built 2aee34772e1a
+Successfully tagged kazurayam/mypkg-kazurayam:1.0
+```
+成功した。Dockerイメージができたことを確認するには `docker list` コマンドを投入する。
+
+```
+$ docker image ls
+REPOSITORY                       TAG          IMAGE ID       CREATED         SIZE
+kazurayam/mypkg-kazurayam        1.0          2aee34772e1a   3 minutes ago   136MB
+
+...
+```
+
+#### 自作したDockerイメージからDockerコンテナを起動する
+
+私のMac上の別の適当なディレクトリにcdしてからdocker runコマンドを実行すればそこでDockerコンテナを起動することができる。やってみよう。Dockerコンテナが起動され、そのbashシェルにログインした状態になる。
+
+```
+$ cd ~/tmp
+$ docker run -it --rm kazurayam/mypkg-kazurayam:1.0
+root@5c580d014ccf:/work# 
+```
+
+できた。ではPythonで自作した `greeting` コマンドを実行してみよう。
+
+```
+root@5c580d014ccf:/work# greeting Python
+Hello, Python!
+root@5c580d014ccf:/work# 
+```
+
+greetingコマンドが動いた。
+
+どんなdockerコンテナが今動いているかを見るには、別のターミナルを起動して、docker psコマンドを打つ。
+
+```
+$ docker ps
+CONTAINER ID   IMAGE                           COMMAND             CREATED          STATUS          PORTS     NAMES
+d036761d3325   kazurayam/mypkg-kazurayam:1.0   "/bin/sh -c bash"   12 seconds ago   Up 10 seconds             unruffled_chaplygin
+```
+
+ではDockerコンテナを終了させよう。exitすれば良い。
+
+```
+root@5c580d014ccf:/work# exit
+exit
+:~/tmp
+```
+
+#### Dockerイメージの保存先
+
+このDockerイメージの実体としてのファイルがPC/Macのどこに保存されたかはdockerコマンドが知っている。Dockerイメージを取り出すには必ずdockerコマンドを使うので、保存場所を知っておく必要はない。
+
+ここで作ったDockerイメージをよそでも利用したければ、イメージをいったんDocker Hubにあげて共有可能な状態にせよ。別PCでdockerコマンドを実行しDocker Hubからイメージをダウンロードせよ。
+
+#### dockerコマンドのレファレンス
+
+dockerコンテナの作成、起動から停止までどんなコマンドを使うかについては
+
+- [Dockerコンテナの作成、起動〜停止まで](https://qiita.com/kooohei/items/0e788a2ce8c30f9dba53)
+
+が役に立つ。
+
+### Docker Hubにアップロードする
+
+自作したDockerイメージをDocker Hubにアップする手順については下記を参考にした。
+
+- [DockerImageをDockerHubに登録する方法](https://qiita.com/kon_yu/items/7c40f4dfbd1cce006ce7)
+
+事前にDocker Hubに自分のためのアカウントを準備しておいた。
+
+#### ローカルからイメージをpushする方法
+
+Docker Hubにログインする
+'''
+$ docker login
+'''
+
+自作したイメージをpushする
+```
+$ docker push kazurayam/mypkg-kazurayam:1.0
+The push refers to repository [docker.io/kazurayam/mypkg-kazurayam]
+eabc49849837: Pushed 
+02431f26c7f4: Pushed 
+a19bcd8712ef: Pushed 
+b475be986c39: Pushed 
+424db1bab221: Pushed 
+d101a5002485: Pushed 
+bb52f2ddc560: Pushed 
+f001ccd77806: Pushed 
+24284177bf76: Mounted from library/python 
+b64b3bf8eaca: Mounted from library/python 
+ba441d17b790: Mounted from library/python 
+477e7db04777: Mounted from library/python 
+cb42413394c4: Mounted from library/python 
+1.0: digest: sha256:7f297987f71f28d6f1ad3cf839ac355118a59e623dece42b55a3dc15a5ee2774 size: 3033
+:~
+```
+
+できた。ブラウザで https://hub.docker.com/ を開き、自分のアカウントでログインすれば、今アップしたDockerイメージがたしかにDocker Hubに格納されているのがわかる。
+
+![onDockerHub](docs/images/onDockerHub.png)
+
+#### GitHub連携する方法
 
 ## まとめ
 
-以上でLevel1の準備作業をした。つまり
+以上でLevel2は完了。つまり
 
-1. pyenvでPython処理系を複数バージョン、Macにインストールした
-2. プロジェクトのディレクトリ構造を決めた
-3. pipenvで仮想環境を作り、その仮想環境に本プロジェクのための外部ライブラリをインストールした
-4. IntelliJ IDEAを使ってPythonコードを開発できるよう、IDEAを設定した
-5. pytestを使ってユニットテストを実行できるように準備した
+1. 自作のPythonプログラムをpipでライブラリ化した。自作ライブラリをPyPIにアップした。
+1. 自作ライブラリを使ってDockerイメージを作った。DockerイメージをDocker Hubにアップした。
 
-
+これで自作したPythonプログラムを他のひと他の場所で共有する準備ができた。
